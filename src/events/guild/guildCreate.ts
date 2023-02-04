@@ -3,7 +3,7 @@ import { Guild } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 import { sendDataToAPI } from "@utils/api";
 
-export class guildCreate extends Event {
+export class GuildCreate extends Event {
   constructor(client: ShewenyClient) {
     super(client, "guildCreate", {
       description: "new guild joined",

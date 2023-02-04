@@ -3,7 +3,7 @@ import { Guild } from "discord.js";
 import type { ShewenyClient } from "sheweny";
 import { deleteDataFromAPI } from "@utils/api";
 
-export class guildDelete extends Event {
+export class GuildDelete extends Event {
   constructor(client: ShewenyClient) {
     super(client, "guildDelete", {
       description: "guild left",
