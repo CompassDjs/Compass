@@ -14,12 +14,47 @@ export async function apiPing() {
   }
 }
 
-export async function cacheDataToAPI(url: string, cacheData: object) {
+export async function sendDataToAPI(
+  url: string,
+  method: string,
+  cacheData: object
+) {
+  try {
+    let response =
+      method === "put"
+        ? await axios.put(`${process.env.API_URL}/${url}`, cacheData)
+        : await axios.post(`${process.env.API_URL}/${url}`, cacheData);
+    LogApiRes(
+      `${method.toUpperCase()} api/${url} ${response.status} ${
+        response.statusText
+      }`
+    );
+  } catch (_err) {
+    console.log(_err);
+    LogApiError(`${method.toUpperCase()} api/${url} `);
+  }
+}
+
+export async function deleteDataFromAPI(url: string) {
   let response: any;
   try {
-    response = await axios.put(`${process.env.API_URL}/${url}`, cacheData);
-    LogApiRes(`PUT api/${url} ${response.status} ${response.statusText}`);
+    response = await axios.delete(`${process.env.API_URL}/${url}`);
+    LogApiRes(`DELETE api/${url} ${response.status} ${response.statusText}`);
   } catch (_err) {
-    LogApiError(`PUT api/${url} ${response.status} ${response.statusText}`);
+    LogApiError(
+      `DELETE api/${url} ${response?.status} ${response?.statusText}`
+    );
+  }
+}
+
+export async function getDataFromAPI(url: string) {
+  let response: any;
+  try {
+    response = await axios.get(`${process.env.API_URL}/${url}`);
+    LogApiRes(`GET api/${url} ${response.status} ${response.statusText}`);
+    return response.data;
+  } catch (_err) {
+    LogApiError(`GET api/${url} ${response?.status} ${response?.statusText}`);
+    return null;
   }
 }
