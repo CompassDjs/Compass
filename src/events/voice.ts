@@ -1,7 +1,7 @@
 import { Event } from "sheweny";
 import type { ShewenyClient } from "sheweny";
 import type { VoiceState } from "discord.js";
-import { cacheDataToAPI } from "@utils/api";
+import { sendDataToAPI, getDataFromAPI } from "@utils/api";
 import { getCacheField, setCacheField, deleteCacheField } from "@utils/cache";
 
 export class VoiceStateUpdateEvent extends Event {
@@ -16,6 +16,14 @@ export class VoiceStateUpdateEvent extends Event {
     const { member, guild } = newState;
 
     if (!oldState.channelId && newState.channelId) {
+      getDataFromAPI(`users/i/${member!.id}`).then(async (data) => {
+        if (!data) {
+          await sendDataToAPI(`users/add`, "post", {
+            userId: member!.id,
+          });
+        }
+      });
+
       // User joined a voice channel
       await setCacheField(
         "voiceSessionStart",
@@ -30,9 +38,13 @@ export class VoiceStateUpdateEvent extends Event {
           if (typeof time === "number") {
             const timeSpent = Date.now() - time;
 
-            await cacheDataToAPI(`users/i/voice/${member!.id}`, {
-              voiceTime: timeSpent,
-            });
+            await sendDataToAPI(
+              `users/i/voice/${guild.id}/${member!.id}`,
+              "put",
+              {
+                voiceTime: timeSpent,
+              }
+            );
           }
         }
       );
@@ -49,9 +61,13 @@ export class VoiceStateUpdateEvent extends Event {
           if (typeof time === "number") {
             const timeSpent = Date.now() - time;
 
-            await cacheDataToAPI(`users/i/voice/${member!.id}`, {
-              voiceTime: timeSpent,
-            });
+            await sendDataToAPI(
+              `users/i/voice/${guild.id}/${member!.id}`,
+              "put",
+              {
+                voiceTime: timeSpent,
+              }
+            );
             deleteCacheField("voiceSessionStart", guild.id, member!.id);
           }
         }

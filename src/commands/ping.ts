@@ -7,7 +7,6 @@ export class PingCommand extends Command {
     super(client, {
       name: "ping",
       description: "Ping Pong",
-      type: "SLASH_COMMAND",
       category: "Misc",
       cooldown: 3,
     });
