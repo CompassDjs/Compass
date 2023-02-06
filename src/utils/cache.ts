@@ -1,22 +1,26 @@
 import db from "quick.db";
 
 export async function getCacheField(
-  key: string,
-  guildId: string,
-  userId: string
+  keyName: string,
+  field1: string,
+  field2: string
 ) {
-  return (await db.get(`${key}_${guildId}_${userId}`)) || null;
+  return (await db.get(`${keyName}_${field1}_${field2}`)) || null;
 }
 
 export async function setCacheField(
-  key: string,
-  guildId: string,
-  userId: string,
+  keyName: string,
+  field1: string,
+  field2: string,
   data: any
 ) {
-  return await db.set(`${key}_${guildId}_${userId}`, data);
+  return await db.set(`${keyName}_${field1}_${field2}`, data);
 }
 
-export function deleteCacheField(key: string, guildId: string, userId: string) {
-  return db.delete(`${key}_${guildId}_${userId}`);
+export function deleteCacheField(
+  keyName: string,
+  field1: string,
+  field2: string
+) {
+  return db.delete(`${keyName}_${field1}_${field2}`);
 }

@@ -18,9 +18,8 @@ export class InteractionCreate extends Event {
       if (!data) {
         await sendDataToAPI(`guilds/add`, "post", {
           guildId: guild.id,
-          name: guild.name,
-          owner: guild.ownerId,
-          icon: guild.iconURL() || null,
+          createdAt: guild.createdAt,
+          supportedSince: Date.now(),
         });
       }
     });

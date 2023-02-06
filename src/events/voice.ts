@@ -1,7 +1,7 @@
 import { Event } from "sheweny";
 import type { ShewenyClient } from "sheweny";
-import type { VoiceState } from "discord.js";
-import { sendDataToAPI, getDataFromAPI } from "@utils/api";
+import type { VoiceState, ChannelType } from "discord.js";
+import { sendDataToAPI } from "@utils/api";
 import { getCacheField, setCacheField, deleteCacheField } from "@utils/cache";
 
 export class VoiceTimer extends Event {
@@ -18,13 +18,6 @@ export class VoiceTimer extends Event {
 
     if (!oldState.channelId && newState.channelId) {
       // User joined a voice channel
-      getDataFromAPI(`users/i/${member.id}`).then(async (data) => {
-        if (!data) {
-          await sendDataToAPI(`users/add`, "post", {
-            userId: member.id,
-          });
-        }
-      });
 
       await setCacheField("voiceSessionStart", guild.id, member.id, Date.now());
     } else if (oldState.channelId && !newState.channelId) {
@@ -33,7 +26,12 @@ export class VoiceTimer extends Event {
         async (time: number) => {
           const timeSpent = Date.now() - time;
 
-          await sendDataToAPI(`users/i/voice/${guild.id}/${member.id}`, "put", {
+          await sendDataToAPI(`stats/voice`, "put", {
+            userId: member.id,
+            guildId: guild.id,
+            channelId: oldState.channelId,
+            createdAt: Date.now(),
+            type: oldState.channel?.type as ChannelType,
             voiceTime: timeSpent,
           });
           deleteCacheField("voiceSessionStart", guild.id, member.id);
