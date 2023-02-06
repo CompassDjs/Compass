@@ -1,6 +1,7 @@
 import axios from "axios";
-import { LogApiRes, LogApiError, LogApiPing } from "./logger";
+import { LogApiRes, LogApiError, LogApiPing, LogApiReq } from "./logger";
 import dotenv from "dotenv";
+import { Wait } from "@utils/functions";
 dotenv.config();
 
 export async function apiPing() {
@@ -14,24 +15,31 @@ export async function apiPing() {
   }
 }
 
+let requestCount = 0;
 export async function sendDataToAPI(
   url: string,
   method: string,
-  cacheData: object
+  cacheData: any
 ) {
   try {
+    await Wait(1000 * ++requestCount);
+    if (requestCount > 0) requestCount = 0;
+
     let response =
       method === "put"
         ? await axios.put(`${process.env.API_URL}/${url}`, cacheData)
         : await axios.post(`${process.env.API_URL}/${url}`, cacheData);
-    LogApiRes(
+    LogApiReq(
       `${method.toUpperCase()} api/${url} ${response.status} ${
         response.statusText
       }`
     );
-  } catch (_err) {
-    console.log(_err);
-    LogApiError(`${method.toUpperCase()} api/${url} `);
+  } catch (error: any) {
+    LogApiError(
+      `${method.toUpperCase()} api/${url} ${error.response.status} ${
+        error.response.statusText
+      }`
+    );
   }
 }
 

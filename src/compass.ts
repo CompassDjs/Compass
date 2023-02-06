@@ -13,6 +13,7 @@ export default class Compass extends ShewenyClient {
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.GuildVoiceStates,
+        IntentsBitField.Flags.GuildPresences,
       ],
       partials: [
         Partials.GuildMember,
@@ -23,7 +24,7 @@ export default class Compass extends ShewenyClient {
       presence: {
         activities: [
           {
-            name: "SENW",
+            name: "/stats",
             type: ActivityType.Watching,
           },
         ],
