@@ -20,7 +20,7 @@ export class MessageCreate extends Event {
       messageId: message.id,
       channelId: channel.id,
       type: message.type,
-      createdAt: Date.now(),
+      guildCreatedAt: guild?.createdAt.getTime(),
     });
   }
 }

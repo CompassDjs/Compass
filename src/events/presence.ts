@@ -22,7 +22,6 @@ export class PresenceTracker extends Event {
       await sendDataToAPI(`stats/game`, "put", {
         guildId: guild!.id,
         userId,
-        createdAt: Date.now(),
         gameName: oldActivity.name,
         gameTime: timeSpent,
       });
