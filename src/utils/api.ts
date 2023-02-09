@@ -1,17 +1,15 @@
 import axios from "axios";
-import { LogApiRes, LogApiError, LogApiPing, LogApiReq } from "./logger";
+import { LogApiRes, LogApiError, LogApiReq } from "./logger";
 import dotenv from "dotenv";
 import { Wait } from "@utils/functions";
 dotenv.config();
 
 export async function apiPing() {
-  let response: any;
   try {
-    response = await axios.get(`${process.env.API_URL}/ping`);
-    LogApiPing(`api/ping ${response.status} ${response.data}`);
+    await axios.get(`${process.env.API_URL}/ping`);
+    return true;
   } catch (_err) {
-    LogApiPing(`api/ping ❌`);
-    throw new Error("API is not responding");
+    return false;
   }
 }
 
@@ -21,6 +19,7 @@ export async function sendDataToAPI(
   method: string,
   cacheData: any
 ) {
+  if (!(await apiPing())) return;
   try {
     await Wait(1000 * ++requestCount);
     if (requestCount > 0) requestCount = 0;
@@ -45,6 +44,7 @@ export async function sendDataToAPI(
 
 export async function deleteDataFromAPI(url: string) {
   let response: any;
+  if (!(await apiPing())) return;
   try {
     response = await axios.delete(`${process.env.API_URL}/${url}`);
     LogApiRes(`DELETE api/${url} ${response.status} ${response.statusText}`);
@@ -57,6 +57,7 @@ export async function deleteDataFromAPI(url: string) {
 
 export async function getDataFromAPI(url: string) {
   let response: any;
+  if (!(await apiPing())) return null;
   try {
     response = await axios.get(`${process.env.API_URL}/${url}`);
     LogApiRes(`GET api/${url} ${response.status} ${response.statusText}`);
