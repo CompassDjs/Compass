@@ -11,11 +11,9 @@ export class GuildCreate extends Event {
   }
 
   async execute(guild: Guild) {
-    //ajouter supportedSince
     await sendDataToAPI(`guilds/add`, "post", {
       guildId: guild.id,
-      createdAt: guild.createdAt,
-      supportedSince: Date.now(),
+      guildCreatedAt: guild.createdAt.getTime(),
     });
     console.log(
       `➕ Guild: ${guild.name} - ${guild.id} - ${guild.members.cache.size} users`

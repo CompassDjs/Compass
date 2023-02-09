@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 export function Embed(color = true) {
   const embed = new EmbedBuilder();
@@ -8,4 +8,13 @@ export function Embed(color = true) {
 
 export function Wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function Defer(interaction: CommandInteraction) {
+  let bool = true;
+  await interaction.deferReply({ ephemeral: true }).catch(() => {
+    bool = false;
+  });
+  await Wait(1000);
+  return bool;
 }
