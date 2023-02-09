@@ -12,14 +12,12 @@ export class InteractionCreate extends Event {
 
   async execute(interaction: Interaction) {
     const { guild } = interaction;
-    if (!guild) return;
 
-    await getDataFromAPI(`guilds/i/${guild.id}`).then(async (data) => {
+    await getDataFromAPI(`guilds/i/${guild!.id}`).then(async (data: any) => {
       if (!data) {
         await sendDataToAPI(`guilds/add`, "post", {
-          guildId: guild.id,
-          createdAt: guild.createdAt,
-          supportedSince: Date.now(),
+          guildId: guild!.id,
+          guildCreatedAt: guild!.createdAt.getTime(),
         });
       }
     });

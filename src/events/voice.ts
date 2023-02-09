@@ -18,7 +18,6 @@ export class VoiceTimer extends Event {
 
     if (!oldState.channelId && newState.channelId) {
       // User joined a voice channel
-
       await setCacheField("voiceSessionStart", guild.id, member.id, Date.now());
     } else if (oldState.channelId && !newState.channelId) {
       // User left a voice channel

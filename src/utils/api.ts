@@ -24,23 +24,24 @@ export async function sendDataToAPI(
   cacheData: any
 ) {
   if (!(await apiPing())) return;
+  let response: any;
   try {
     await Wait(1000 * ++requestCount);
     if (requestCount > 0) requestCount = 0;
 
-    let response =
+    response =
       method === "put"
         ? await axios.put(`${process.env.API_URL}/${url}`, cacheData)
         : await axios.post(`${process.env.API_URL}/${url}`, cacheData);
     LogApiReq(
-      `${method.toUpperCase()} api/${url} ${response.status} ${
-        response.statusText
+      `${method.toUpperCase()} api/${url} ${response?.status} ${
+        response?.statusText
       }`
     );
   } catch (error: any) {
     LogApiError(
-      `${method.toUpperCase()} api/${url} ${error.response.status} ${
-        error.response.statusText
+      `${method.toUpperCase()} api/${url} ${response?.status} ${
+        response?.statusText
       }`
     );
   }

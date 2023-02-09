@@ -1,7 +1,7 @@
 import { Command } from "sheweny";
 import type { ShewenyClient } from "sheweny";
 import { getDataFromAPI } from "@utils/api";
-import { Embed } from "@utils/functions";
+import { Embed, Wait } from "@utils/functions";
 import prettyMilliseconds from "pretty-ms";
 import { CommandInteraction } from "discord.js";
 
@@ -18,6 +18,7 @@ export class MyStats extends Command {
   async execute(interaction: CommandInteraction) {
     const { guild, user } = interaction;
     if (!guild) return;
+    await Wait(1000);
     await interaction.deferReply();
 
     await getDataFromAPI(`stats/i/${guild.id}/${user.id}`).then(
