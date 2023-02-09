@@ -5,12 +5,16 @@ import { Wait } from "@utils/functions";
 dotenv.config();
 
 export async function apiPing() {
-  try {
-    await axios.get(`${process.env.API_URL}/ping`);
-    return true;
-  } catch (_err) {
-    return false;
-  }
+  let status = false;
+  await axios
+    .get(`${process.env.API_URL}/ping`)
+    .then((res) => {
+      if (res.status === 200) status = true;
+    })
+    .catch((_err) => {
+      status = false;
+    });
+  return status;
 }
 
 let requestCount = 0;
