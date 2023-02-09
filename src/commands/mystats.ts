@@ -20,39 +20,57 @@ export class MyStats extends Command {
     if (!guild) return;
     await interaction.deferReply();
 
-    await getDataFromAPI(`stats/i/${user.id}`).then(async (data) => {
-      if (!data) {
-        await interaction.followUp({
-          content: "You don't have any stats yet",
-        });
-      } else {
-        await interaction.followUp({
-          embeds: [
-            Embed()
-              .setTitle("📊 Your stats")
-              .addFields(
-                {
-                  name: "📢 Voice Time:",
-                  value: `${"```"}${prettyMilliseconds(data.totalVoiceTime, {
-                    verbose: true,
-                  })}${"```"}`,
-                  inline: true,
-                },
-                {
-                  name: "📝 Messages:",
-                  value: `${"```"}${data.user.msgSent}${"```"}`,
-                },
-                {
-                  name: "🎮 Game Time:",
-                  value: `${"```"}${prettyMilliseconds(data.totalGameTime, {
-                    verbose: true,
-                  })}${"```"}`,
-                  inline: true,
-                }
-              ),
-          ],
-        });
+    await getDataFromAPI(`stats/i/${guild.id}/${user.id}`).then(
+      async (data) => {
+        if (!data) {
+          await interaction.followUp({
+            content: "You don't have any stats yet",
+          });
+        } else {
+          console.log(data);
+          const totalVoiceTime = data.guildTotalVoice;
+          const totalGameTime = data.totalGameTime;
+          const totalMsg = data.guildTotalMsg;
+          await interaction.followUp({
+            embeds: [
+              Embed()
+                .setAuthor({
+                  name: `${guild.name} 📊`,
+                  iconURL: guild.iconURL() || undefined,
+                })
+                .addFields(
+                  {
+                    name: "📢 Voice Time",
+                    value: `${"```"}${
+                      totalVoiceTime
+                        ? prettyMilliseconds(totalVoiceTime, {
+                            verbose: true,
+                          })
+                        : "0"
+                    }${"```"}`,
+                    inline: true,
+                  },
+                  {
+                    name: "📝 Messages",
+                    value: `${"```"}${totalMsg ? totalMsg : "0"}${"```"}`,
+                  },
+                  {
+                    name: "🎮 Game Time",
+                    value: `${"```"}${
+                      totalGameTime
+                        ? prettyMilliseconds(totalGameTime, {
+                            verbose: true,
+                          })
+                        : "0"
+                    }${"```"}`,
+                    inline: true,
+                  }
+                )
+                .setTimestamp(),
+            ],
+          });
+        }
       }
-    });
+    );
   }
 }
