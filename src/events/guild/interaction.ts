@@ -17,9 +17,8 @@ export class InteractionCreate extends Event {
     await getDataFromAPI(`guilds/i/${guild.id}`).then(async (data) => {
       if (!data) {
         await sendDataToAPI(`guilds/add`, "post", {
-          guildId: guild.id,
-          createdAt: guild.createdAt,
-          supportedSince: Date.now(),
+          id: guild!.id,
+          guildCreatedAt: guild!.createdAt.getTime(),
         });
       }
     });
