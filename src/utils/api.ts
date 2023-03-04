@@ -40,8 +40,8 @@ export async function sendDataToAPI(
     );
   } catch (error: any) {
     LogApiError(
-      `${method.toUpperCase()} api/${url} ${response?.status} ${
-        response?.statusText
+      `${method.toUpperCase()} api/${url} ${error?.response?.status} ${
+        error?.response?.statusText
       }`
     );
   }
@@ -52,7 +52,7 @@ export async function deleteDataFromAPI(url: string) {
   if (!(await apiPing())) return;
   try {
     response = await axios.delete(`${process.env.API_URL}/${url}`);
-    LogApiRes(`DELETE api/${url} ${response.status} ${response.statusText}`);
+    LogApiRes(`DELETE api/${url} ${response?.status} ${response?.statusText}`);
   } catch (_err) {
     LogApiError(
       `DELETE api/${url} ${response?.status} ${response?.statusText}`
@@ -65,7 +65,7 @@ export async function getDataFromAPI(url: string) {
   if (!(await apiPing())) return null;
   try {
     response = await axios.get(`${process.env.API_URL}/${url}`);
-    LogApiRes(`GET api/${url} ${response.status} ${response.statusText}`);
+    LogApiRes(`GET api/${url} ${response?.status} ${response?.statusText}`);
     return response.data;
   } catch (_err) {
     LogApiError(`GET api/${url} ${response?.status} ${response?.statusText}`);

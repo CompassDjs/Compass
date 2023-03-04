@@ -3,7 +3,12 @@ import type { ShewenyClient } from "sheweny";
 import { getDataFromAPI } from "@utils/api";
 import { Defer, Embed } from "@utils/functions";
 import prettyMilliseconds from "pretty-ms";
-import { CommandInteraction } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  CommandInteraction,
+} from "discord.js";
 
 export class MyStats extends Command {
   constructor(client: ShewenyClient) {
@@ -20,22 +25,36 @@ export class MyStats extends Command {
     if (!guild) return;
     await Defer(interaction);
 
-    await getDataFromAPI(`stats/i/${guild.id}/${user.id}`).then(
+    await getDataFromAPI(`stats/bot/${guild.id}/${user.id}`).then(
       async (data) => {
-        if (!data) {
+        if (!data.totals) {
           await interaction.followUp({
             content: "`📊` You don't have any stats yet!",
           });
         } else {
-          const totalVoiceTime = data.guildTotalVoice;
-          const totalGameTime = data.totalGameTime;
-          const totalMsg = data.guildTotalMsg;
+          const totalVoiceTime = data.totals.totalVoice;
+          const totalGameTime = data.totals.totalGames;
+          const totalMsg = data.totals.totalMsg;
+
+          const webLinkBtn =
+            new ActionRowBuilder<ButtonBuilder>().addComponents(
+              new ButtonBuilder()
+                .setLabel("View more")
+                .setStyle(ButtonStyle.Link)
+                .setURL(process.env.FRONT_URL!)
+                .setEmoji("🧭")
+            );
+
           await interaction.followUp({
             embeds: [
               Embed()
                 .setAuthor({
-                  name: `${guild.name} 📊`,
+                  name: `${guild.name}`,
                   iconURL: guild.iconURL() || undefined,
+                })
+                .setFooter({
+                  text: `${user.tag}`,
+                  iconURL: user.displayAvatarURL(),
                 })
                 .addFields(
                   {
@@ -52,6 +71,7 @@ export class MyStats extends Command {
                   {
                     name: "📝 Messages",
                     value: `${"```"}${totalMsg ? totalMsg : "0"}${"```"}`,
+                    inline: true,
                   },
                   {
                     name: "🎮 Game Time",
@@ -64,9 +84,9 @@ export class MyStats extends Command {
                     }${"```"}`,
                     inline: true,
                   }
-                )
-                .setTimestamp(),
+                ),
             ],
+            components: [webLinkBtn],
           });
         }
       }
