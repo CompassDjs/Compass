@@ -12,7 +12,7 @@ export class GuildCreate extends Event {
 
   async execute(guild: Guild) {
     await sendDataToAPI(`guilds/add`, "post", {
-      guildId: guild.id,
+      id: guild.id,
       guildCreatedAt: guild.createdAt.getTime(),
     });
     console.log(
