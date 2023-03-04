@@ -11,7 +11,6 @@ export class GuildCreate extends Event {
   }
 
   async execute(guild: Guild) {
-    //ajouter supportedSince
     await sendDataToAPI(`guilds/add`, "post", {
       id: guild.id,
       guildCreatedAt: guild.createdAt.getTime(),

@@ -18,8 +18,27 @@ export class VoiceTimer extends Event {
 
     if (!oldState.channelId && newState.channelId) {
       // User joined a voice channel
-
       await setCacheField("voiceSessionStart", guild.id, member.id, Date.now());
+    } else if (oldState.channelId && newState.channelId) {
+      // User switched voice channels
+      await getCacheField("voiceSessionStart", guild.id, member.id).then(
+        async (time: number) => {
+          const timeSpent = Date.now() - time;
+
+          await sendDataToAPI(`stats/voice`, "put", {
+            userId: member.id,
+            guildId: guild.id,
+            channelId: oldState.channelId,
+            voiceTime: timeSpent,
+          });
+          await setCacheField(
+            "voiceSessionStart",
+            guild.id,
+            member.id,
+            Date.now()
+          );
+        }
+      );
     } else if (oldState.channelId && !newState.channelId) {
       // User left a voice channel
       await getCacheField("voiceSessionStart", guild.id, member.id).then(
@@ -30,7 +49,6 @@ export class VoiceTimer extends Event {
             userId: member.id,
             guildId: guild.id,
             channelId: oldState.channelId,
-            createdAt: Date.now(),
             type: oldState.channel?.type as ChannelType,
             voiceTime: timeSpent,
           });
